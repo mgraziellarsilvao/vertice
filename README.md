@@ -2,6 +2,8 @@
 
 **From Data to Decisions.**
 
+🚀 Acessar aplicação — [VÉRTICE](https://vertice-generator.streamlit.app/)
+
 Plataforma de inteligência de dados desenvolvida em Python e Streamlit para transformar arquivos estruturados em indicadores, visualizações, descobertas analíticas e informações que apoiam a tomada de decisão.
 
 O VÉRTICE automatiza etapas da análise exploratória, identifica padrões e comportamentos relevantes, detecta possíveis anomalias e consolida resultados em relatórios executivos. Também conta com uma camada opcional de inteligência artificial generativa para apoiar a interpretação dos insights.
