@@ -1,0 +1,16 @@
+# Ambiente Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Credenciais e configurações privadas
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Arquivos temporários
+*.log
+.DS_Store
+Thumbs.db

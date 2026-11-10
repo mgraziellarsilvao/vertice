@@ -1,0 +1,41 @@
+﻿data_lancamento,categoria_despesa,centro_custo,valor,status_pagamento
+01/01/2026,Manutenção,CC-121,31823,Pago
+01/01/2026,Serviços,CC-120,13614,Pago
+01/01/2026,Tecnologia,CC-107,28536,Em aprovação
+01/01/2026,Logística,CC-110,15046,Pendente
+01/01/2026,Administrativo,CC-113,11030,Pendente
+01/02/2026,Manutenção,CC-124,26813,Pendente
+01/02/2026,Serviços,CC-110,17820,Pendente
+01/02/2026,Tecnologia,CC-108,27536,Pago
+01/02/2026,Logística,CC-100,16022,Pago
+01/02/2026,Administrativo,CC-119,10161,Em aprovação
+01/03/2026,Manutenção,CC-111,24722,Em aprovação
+01/03/2026,Serviços,CC-122,11870,Pendente
+01/03/2026,Tecnologia,CC-103,30513,Pendente
+01/03/2026,Logística,CC-112,24711,Pendente
+01/03/2026,Administrativo,CC-109,11989,Pago
+01/04/2026,Manutenção,CC-117,15236,Pendente
+01/04/2026,Serviços,CC-109,22572,Em aprovação
+01/04/2026,Tecnologia,CC-108,10103,Pago
+01/04/2026,Logística,CC-124,16134,Pendente
+01/04/2026,Administrativo,CC-112,29805,Em aprovação
+01/05/2026,Manutenção,CC-106,18978,Em aprovação
+01/05/2026,Serviços,CC-106,31260,Em aprovação
+01/05/2026,Tecnologia,CC-117,14267,Em aprovação
+01/05/2026,Logística,CC-118,18784,Pago
+01/05/2026,Administrativo,CC-102,9902,Pendente
+01/06/2026,Manutenção,CC-103,29662,Pendente
+01/06/2026,Serviços,CC-105,24896,Em aprovação
+01/06/2026,Tecnologia,CC-120,15342,Pendente
+01/06/2026,Logística,CC-104,21125,Pendente
+01/06/2026,Administrativo,CC-100,28558,Em aprovação
+01/07/2026,Manutenção,CC-117,52000,Pendente
+01/07/2026,Serviços,CC-107,18370,Pendente
+01/07/2026,Tecnologia,CC-114,11365,Pago
+01/07/2026,Logística,CC-115,23596,Pago
+01/07/2026,Administrativo,CC-110,26179,Em aprovação
+01/08/2026,Manutenção,CC-104,8998,Pendente
+01/08/2026,Serviços,CC-108,12517,Pendente
+01/08/2026,Tecnologia,CC-116,11468,Pago
+01/08/2026,Logística,CC-114,12204,Em aprovação
+01/08/2026,Administrativo,CC-107,12094,Em aprovação

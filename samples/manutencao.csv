@@ -1,0 +1,81 @@
+﻿ordem,data_criacao,equipamento,tipo_manutencao,status_ordem,tempo_resposta_dias,prioridade
+OR-10001,01/07/2026,EQ-105,Corretiva,Concluída,6,Média
+OR-10002,11/05/2026,EQ-109,Preventiva,Concluída,10,Baixa
+OR-10003,21/07/2026,EQ-122,Inspeção,Concluída,7,Média
+OR-10004,16/10/2026,EQ-121,Corretiva,Pendente,10,Média
+OR-10005,18/08/2026,EQ-115,Preventiva,Pendente,5,Média
+OR-10006,29/06/2026,EQ-117,Corretiva,Concluída,13,Média
+OR-10007,10/07/2026,EQ-102,Corretiva,Concluída,11,Baixa
+OR-10008,06/08/2026,EQ-103,Inspeção,Pendente,14,Média
+OR-10009,14/05/2026,EQ-119,Inspeção,Em execução,12,Média
+OR-10010,05/08/2026,EQ-114,Preventiva,Pendente,2,Alta
+OR-10011,08/02/2026,EQ-114,Preventiva,Concluída,9,Média
+OR-10012,07/08/2026,EQ-119,Inspeção,Concluída,12,Média
+OR-10013,11/02/2026,EQ-123,Inspeção,Concluída,2,Alta
+OR-10014,27/05/2026,EQ-116,Inspeção,Pendente,6,Média
+OR-10015,08/08/2026,EQ-108,Inspeção,Pendente,13,Média
+OR-10016,27/08/2026,EQ-109,Corretiva,Concluída,5,Alta
+OR-10017,26/01/2026,EQ-123,Corretiva,Concluída,7,Baixa
+OR-10018,22/02/2026,EQ-113,Inspeção,Pendente,14,Média
+OR-10019,11/02/2026,EQ-109,Corretiva,Pendente,14,Baixa
+OR-10020,08/05/2026,EQ-102,Preventiva,Pendente,12,Alta
+OR-10021,24/05/2026,EQ-114,Preventiva,Concluída,10,Média
+OR-10022,05/08/2026,EQ-120,Corretiva,Concluída,5,Média
+OR-10023,04/01/2026,EQ-107,Corretiva,Pendente,13,Alta
+OR-10024,28/04/2026,EQ-124,Preventiva,Concluída,13,Baixa
+OR-10025,13/01/2026,EQ-102,Corretiva,Pendente,14,Média
+OR-10026,06/07/2026,EQ-102,Inspeção,Concluída,13,Média
+OR-10027,16/05/2026,EQ-103,Inspeção,Concluída,11,Baixa
+OR-10028,28/03/2026,EQ-116,Inspeção,Concluída,1,Alta
+OR-10029,03/09/2026,EQ-115,Inspeção,Concluída,12,Baixa
+OR-10030,15/03/2026,EQ-101,Inspeção,Em execução,12,Baixa
+OR-10031,11/09/2026,EQ-117,Inspeção,Concluída,12,Média
+OR-10032,04/02/2026,EQ-103,Inspeção,Pendente,8,Média
+OR-10033,26/01/2026,EQ-121,Corretiva,Pendente,3,Alta
+OR-10034,05/01/2026,EQ-106,Preventiva,Em execução,10,Média
+OR-10035,02/06/2026,EQ-101,Preventiva,Concluída,9,Baixa
+OR-10036,18/05/2026,EQ-117,Corretiva,Concluída,3,Alta
+OR-10037,23/04/2026,EQ-124,Corretiva,Pendente,7,Média
+OR-10038,19/09/2026,EQ-114,Corretiva,Em execução,3,Média
+OR-10039,06/05/2026,EQ-114,Corretiva,Pendente,10,Baixa
+OR-10040,17/02/2026,EQ-103,Corretiva,Concluída,8,Média
+OR-10041,08/02/2026,EQ-102,Inspeção,Concluída,2,Média
+OR-10042,04/07/2026,EQ-110,Inspeção,Pendente,9,Média
+OR-10043,16/02/2026,EQ-110,Inspeção,Pendente,4,Média
+OR-10044,04/10/2026,EQ-100,Preventiva,Concluída,6,Média
+OR-10045,29/01/2026,EQ-114,Corretiva,Pendente,8,Média
+OR-10046,26/06/2026,EQ-116,Corretiva,Pendente,5,Média
+OR-10047,01/03/2026,EQ-110,Corretiva,Concluída,9,Média
+OR-10048,31/08/2026,EQ-118,Corretiva,Em execução,13,Média
+OR-10049,09/08/2026,EQ-113,Preventiva,Concluída,12,Baixa
+OR-10050,26/04/2026,EQ-112,Preventiva,Concluída,2,Baixa
+OR-10051,04/09/2026,EQ-101,Preventiva,Concluída,4,Alta
+OR-10052,08/08/2026,EQ-107,Preventiva,Concluída,11,Baixa
+OR-10053,31/07/2026,EQ-121,Corretiva,Concluída,6,Média
+OR-10054,20/07/2026,EQ-102,Corretiva,Em execução,6,Baixa
+OR-10055,15/05/2026,EQ-119,Corretiva,Pendente,5,Baixa
+OR-10056,14/08/2026,EQ-109,Inspeção,Concluída,9,Média
+OR-10057,15/08/2026,EQ-113,Corretiva,Concluída,3,Baixa
+OR-10058,04/10/2026,EQ-124,Inspeção,Pendente,8,Baixa
+OR-10059,15/07/2026,EQ-103,Corretiva,Concluída,7,Alta
+OR-10060,08/09/2026,EQ-118,Preventiva,Concluída,7,Alta
+OR-10061,02/04/2026,EQ-104,Preventiva,Concluída,13,Média
+OR-10062,27/02/2026,EQ-107,Preventiva,Pendente,7,Média
+OR-10063,05/01/2026,EQ-102,Preventiva,Pendente,4,Média
+OR-10064,16/06/2026,EQ-116,Corretiva,Pendente,10,Alta
+OR-10065,06/08/2026,EQ-109,Inspeção,Concluída,8,Baixa
+OR-10066,10/04/2026,EQ-112,Corretiva,Em execução,11,Média
+OR-10067,10/05/2026,EQ-122,Preventiva,Em execução,9,Média
+OR-10068,24/06/2026,EQ-112,Inspeção,Concluída,8,Média
+OR-10069,27/10/2026,EQ-122,Corretiva,Concluída,9,Média
+OR-10070,05/04/2026,EQ-104,Preventiva,Em execução,1,Média
+OR-10071,07/05/2026,EQ-107,Preventiva,Concluída,9,Média
+OR-10072,21/02/2026,EQ-117,Corretiva,Em execução,9,Média
+OR-10073,21/09/2026,EQ-111,Inspeção,Em execução,11,Baixa
+OR-10074,27/03/2026,EQ-124,Corretiva,Em execução,11,Alta
+OR-10075,02/06/2026,EQ-118,Inspeção,Concluída,7,Média
+OR-10076,06/05/2026,EQ-124,Preventiva,Concluída,14,Baixa
+OR-10077,19/10/2026,EQ-118,Corretiva,Concluída,5,Alta
+OR-10078,02/06/2026,EQ-119,Inspeção,Em execução,7,Média
+OR-10079,08/04/2026,EQ-124,Preventiva,Pendente,6,Alta
+OR-10080,08/03/2026,EQ-113,Corretiva,Em execução,12,Baixa
