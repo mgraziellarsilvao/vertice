@@ -288,6 +288,12 @@ def generate_anomaly_details_section(anomaly_details):
             f"  - **Limite superior:** {row.get('Limite superior', 'Não informado')}"
         )
 
+        if "Grupo" in anomaly_details.columns:
+
+            details.append(
+                f"  - **Grupo:** {row.get('Grupo', 'Não informado')}"
+            )
+
         contextual_fields = [
             ("data_lancamento", "Data de lançamento"),
             ("categoria_despesa", "Categoria"),

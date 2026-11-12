@@ -11,7 +11,8 @@ from modules.chart_engine import generate_charts
 
 from modules.insights_engine import (
     generate_insights,
-    generate_anomaly_details
+    generate_anomaly_details,
+    list_group_columns
 )
 
 from modules.context_engine import generate_context_insights
@@ -1118,6 +1119,43 @@ try:
     st.success("Base carregada e pronta para análise.")
 
     # =====================================================
+    # MÉTODO DE DETECÇÃO DE ANOMALIAS
+    # =====================================================
+
+    group_col = None
+    group_options = list_group_columns(df)
+
+    if group_options:
+
+        with st.expander("Configuração da detecção de anomalias"):
+
+            method = st.radio(
+                "Método do IQR",
+                ["Coluna inteira", "Por categoria"],
+                horizontal=True,
+                help=(
+                    "Por categoria compara cada registro apenas com os "
+                    "demais do mesmo grupo. Grupos com menos de 8 "
+                    "registros não são avaliados."
+                )
+            )
+
+            if method == "Por categoria":
+
+                group_col = st.selectbox(
+                    "Calcular dentro de cada:",
+                    group_options
+                )
+
+    # Se o método mudou, a análise de IA anterior deixa de valer
+    config_key = f"{analysis_identity}|{group_col}"
+
+    if st.session_state.get("config_key") != config_key:
+
+        st.session_state["config_key"] = config_key
+        st.session_state["ai_analysis_result"] = None
+
+    # =====================================================
     # 11. PROCESSAMENTO ANALÍTICO
     # =====================================================
 
@@ -1137,7 +1175,10 @@ try:
             chart_index
         )
 
-    statistical_insights = generate_insights(df)
+    statistical_insights = generate_insights(
+        df,
+        group_col=group_col
+    )
 
     contextual_insights = generate_context_insights(df)
 
@@ -1149,7 +1190,10 @@ try:
         ignore_index=True
     )
 
-    anomaly_details = generate_anomaly_details(df)
+    anomaly_details = generate_anomaly_details(
+        df,
+        group_col=group_col
+    )
 
     executive_report = create_executive_summary(
         metrics,
@@ -1431,6 +1475,16 @@ try:
             )
 
             st.caption(
+                "Método: IQR "
+                + (
+                    f"calculado dentro de cada grupo de '{group_col}'. "
+                    "Grupos com menos de 8 registros não foram avaliados."
+                    if group_col
+                    else "calculado sobre a coluna inteira."
+                )
+            )
+
+            st.caption(
                 "A linha na base corresponde à posição do "
                 "registro no arquivo original, começando em 1. "
                 "A identificação estatística não significa "
@@ -1605,7 +1659,9 @@ try:
             - Concentração: categorias com participação
               igual ou superior a 40%.
             - Anomalias: identificação estatística pelo
-              método IQR.
+              método IQR, sobre a coluna inteira ou dentro de
+              cada categoria (grupos com menos de 8 registros
+              não são avaliados).
 
             **Insights contextuais**
 

@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from modules.chart_engine import suggest_aggregation
+from modules.column_rules import is_identifier_column
 
 
 OUTPUT_COLUMNS = [
@@ -17,26 +18,6 @@ OUTPUT_COLUMNS = [
 # =========================================================
 # 1. IDENTIFICAÇÃO DAS COLUNAS
 # =========================================================
-
-def is_identifier_column(column_name):
-
-    name = str(column_name).lower().strip()
-
-    identifiers = [
-        "id",
-        "codigo",
-        "código",
-        "cod_",
-        "cpf",
-        "cnpj",
-        "cep",
-        "telefone",
-        "numero_pedido",
-        "numero_ordem"
-    ]
-
-    return any(term in name for term in identifiers)
-
 
 def is_boolean_series(series):
 
@@ -325,8 +306,13 @@ def analyze_concentration(df, columns):
 
 
 # =========================================================
-# 4. ANÁLISE DE ANOMALIAS
+# 4. ANÁLISE DE ANOMALIAS (IQR)
 # =========================================================
+
+# Tamanho mínimo de um grupo para calcular o IQR dentro dele.
+# Com poucos registros os quartis ficam instáveis.
+MIN_GROUP_SIZE = 8
+
 
 def calculate_anomaly_limits(series):
 
@@ -370,52 +356,181 @@ def calculate_anomaly_limits(series):
     return lower_limit, upper_limit
 
 
-def analyze_anomalies(df, columns):
+def list_group_columns(df, min_group=MIN_GROUP_SIZE):
+
+    """
+    Lista as colunas de categoria que servem para agrupar
+    o cálculo do IQR: precisam ter pelo menos dois grupos
+    com o tamanho mínimo e não podem ser identificadores.
+    """
+
+    options = []
+
+    for column in identify_columns(df)["categoricas"]:
+
+        if is_identifier_column(column):
+            continue
+
+        sizes = df[column].value_counts()
+
+        if len(sizes) >= 2 and (sizes >= min_group).sum() >= 2:
+            options.append(column)
+
+    return options
+
+
+def find_anomalies(
+    df,
+    numeric_columns,
+    group_col=None,
+    min_group=MIN_GROUP_SIZE
+):
+
+    """
+    Aplica o IQR a cada coluna numérica.
+
+    - group_col=None: os limites são calculados sobre a coluna inteira.
+    - group_col informado: os limites são calculados dentro de cada
+      grupo da categoria. Grupos menores que min_group não são avaliados.
+
+    Retorna os registros sinalizados e, para cada indicador,
+    quantos grupos foram avaliados em relação ao total.
+    """
+
+    columns_out = [
+        "posicao", "Indicador", "Valor",
+        "Limite inferior", "Limite superior", "Grupo"
+    ]
+
+    use_groups = group_col is not None and group_col in df.columns
+
+    rows = []
+    coverage = {}
+
+    for order, column in enumerate(numeric_columns):
+
+        values = pd.to_numeric(
+            df[column],
+            errors="coerce"
+        ).astype("float64")
+
+        if use_groups and group_col != column:
+            groups = df.groupby(group_col, dropna=True).indices
+        else:
+            groups = {None: np.arange(len(df))}
+
+        evaluated = 0
+
+        for group, positions in groups.items():
+
+            group_values = values.iloc[positions]
+            valid = group_values.dropna()
+
+            if use_groups and len(valid) < min_group:
+                continue
+
+            limits = calculate_anomaly_limits(valid)
+
+            if limits is None:
+                continue
+
+            evaluated += 1
+
+            lower_limit, upper_limit = limits
+
+            mask = (
+                (group_values < lower_limit)
+                | (group_values > upper_limit)
+            ).to_numpy()
+
+            for local in np.flatnonzero(mask):
+
+                rows.append({
+                    "_coluna": order,
+                    "posicao": int(positions[local]),
+                    "Indicador": column,
+                    "Valor": float(group_values.iloc[local]),
+                    "Limite inferior": lower_limit,
+                    "Limite superior": upper_limit,
+                    "Grupo": group
+                })
+
+        coverage[column] = (evaluated, len(groups))
+
+    if not rows:
+        return pd.DataFrame(columns=columns_out), coverage
+
+    flagged = (
+        pd.DataFrame(rows)
+        .sort_values(["_coluna", "posicao"])
+        .drop(columns="_coluna")
+        .reset_index(drop=True)
+    )
+
+    return flagged[columns_out], coverage
+
+
+def analyze_anomalies(
+    df,
+    columns,
+    group_col=None,
+    min_group=MIN_GROUP_SIZE
+):
 
     insights = []
 
-    for numeric_col in columns["numericas"]:
+    flagged, coverage = find_anomalies(
+        df,
+        columns["numericas"],
+        group_col,
+        min_group
+    )
 
-        series = pd.to_numeric(
-            df[numeric_col],
-            errors="coerce"
-        ).dropna()
+    if flagged.empty:
+        return insights
 
-        if len(series) < 5:
-            continue
+    for column, subset in flagged.groupby("Indicador", sort=False):
 
-        # Garantir tipo numérico convencional
+        count = len(subset)
 
-        series = series.astype("float64")
+        if group_col is None:
 
-        limits = calculate_anomaly_limits(series)
+            lower_limit = subset["Limite inferior"].iloc[0]
+            upper_limit = subset["Limite superior"].iloc[0]
 
-        if limits is None:
-            continue
+            insight = (
+                f"Foram identificados {count} "
+                f"valores atípicos em {column}."
+            )
 
-        lower_limit, upper_limit = limits
+            evidence = (
+                f"Limite inferior: {lower_limit:.2f} | "
+                f"Limite superior: {upper_limit:.2f} | "
+                f"Valores atípicos: {count}"
+            )
 
-        anomalies = series[
-            (series < lower_limit)
-            | (series > upper_limit)
-        ]
+        else:
 
-        if anomalies.empty:
-            continue
+            evaluated, total = coverage[column]
+
+            insight = (
+                f"Foram identificados {count} valores atípicos "
+                f"em {column}, comparando cada registro com os "
+                f"demais do mesmo grupo de {group_col}."
+            )
+
+            evidence = (
+                f"Método: IQR por {group_col} | "
+                f"Grupos avaliados: {evaluated} de {total} | "
+                f"Valores atípicos: {count}"
+            )
 
         insights.append({
             "Tipo": "Anomalia",
-            "Indicador": numeric_col,
+            "Indicador": column,
             "Agregação": "Não aplicável",
-            "Insight": (
-                f"Foram identificados {len(anomalies)} "
-                f"valores atípicos em {numeric_col}."
-            ),
-            "Evidência": (
-                f"Limite inferior: {lower_limit:.2f} | "
-                f"Limite superior: {upper_limit:.2f} | "
-                f"Valores atípicos: {len(anomalies)}"
-            ),
+            "Insight": insight,
+            "Evidência": evidence,
             "Atenção": (
                 "Investigar os registros identificados. "
                 "Valores atípicos não significam necessariamente erros."
@@ -429,11 +544,20 @@ def analyze_anomalies(df, columns):
 # 5. DETALHAMENTO DOS REGISTROS ATÍPICOS
 # =========================================================
 
-def generate_anomaly_details(df):
+def generate_anomaly_details(
+    df,
+    group_col=None,
+    min_group=MIN_GROUP_SIZE
+):
 
-    detail_columns = [
-        "Linha na base",
-        "Indicador",
+    use_groups = group_col is not None and group_col in df.columns
+
+    detail_columns = ["Linha na base", "Indicador"]
+
+    if use_groups:
+        detail_columns.append("Grupo")
+
+    detail_columns += [
         "Valor atípico",
         "Classificação",
         "Limite inferior",
@@ -445,88 +569,65 @@ def generate_anomaly_details(df):
 
     columns = identify_columns(df)
 
-    details = []
+    flagged, _ = find_anomalies(
+        df,
+        columns["numericas"],
+        group_col,
+        min_group
+    )
 
-    for numeric_col in columns["numericas"]:
-
-        series = pd.to_numeric(
-            df[numeric_col],
-            errors="coerce"
-        )
-
-        series = series.astype("float64")
-
-        valid_series = series.dropna()
-
-        if len(valid_series) < 5:
-            continue
-
-        limits = calculate_anomaly_limits(valid_series)
-
-        if limits is None:
-            continue
-
-        lower_limit, upper_limit = limits
-
-        anomaly_mask = (
-            (series < lower_limit)
-            | (series > upper_limit)
-        )
-
-        positions = [
-            position
-            for position, is_anomaly in enumerate(
-                anomaly_mask.fillna(False).tolist()
-            )
-            if is_anomaly
-        ]
-
-        for position in positions:
-
-            value = series.iloc[position]
-
-            classification = (
-                "Abaixo do limite inferior"
-                if value < lower_limit
-                else "Acima do limite superior"
-            )
-
-            record = df.iloc[position].to_dict()
-
-            record.update({
-                "Linha na base": position + 1,
-                "Indicador": numeric_col,
-                "Valor atípico": value,
-                "Classificação": classification,
-                "Limite inferior": lower_limit,
-                "Limite superior": upper_limit
-            })
-
-            details.append(record)
-
-    if not details:
+    if flagged.empty:
         return pd.DataFrame(columns=detail_columns)
 
-    result = pd.DataFrame(details)
+    details = []
 
-    metadata_columns = detail_columns
+    for _, item in flagged.iterrows():
+
+        position = int(item["posicao"])
+        value = item["Valor"]
+
+        classification = (
+            "Abaixo do limite inferior"
+            if value < item["Limite inferior"]
+            else "Acima do limite superior"
+        )
+
+        record = df.iloc[position].to_dict()
+
+        record.update({
+            "Linha na base": position + 1,
+            "Indicador": item["Indicador"],
+            "Valor atípico": value,
+            "Classificação": classification,
+            "Limite inferior": item["Limite inferior"],
+            "Limite superior": item["Limite superior"]
+        })
+
+        if use_groups:
+            record["Grupo"] = item["Grupo"]
+
+        details.append(record)
+
+    result = pd.DataFrame(details)
 
     original_columns = [
         column
         for column in result.columns
-        if column not in metadata_columns
+        if column not in detail_columns
     ]
 
-    return result[
-        metadata_columns + original_columns
-    ]
+    return result[detail_columns + original_columns]
 
 
 # =========================================================
 # 6. GERAÇÃO CONSOLIDADA DOS INSIGHTS
 # =========================================================
 
-def generate_insights(df):
+def generate_insights(
+    df,
+    group_col=None,
+    min_group=MIN_GROUP_SIZE
+):
 
     if df.empty:
         return pd.DataFrame(columns=OUTPUT_COLUMNS)
@@ -544,7 +645,7 @@ def generate_insights(df):
     )
 
     insights.extend(
-        analyze_anomalies(df, columns)
+        analyze_anomalies(df, columns, group_col, min_group)
     )
 
     if not insights:

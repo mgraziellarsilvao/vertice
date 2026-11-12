@@ -1,16 +1,6 @@
 import pandas as pd
 
-
-def is_identifier_column(column_name):
-    name = str(column_name).lower()
-
-    identifiers = [
-        "id", "codigo", "código", "cod_",
-        "cpf", "cnpj", "cep", "telefone",
-        "numero_pedido", "numero_ordem"
-    ]
-
-    return any(term in name for term in identifiers)
+from modules.column_rules import is_identifier_column
 
 
 def detect_date_column(column_name, series):
